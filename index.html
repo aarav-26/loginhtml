@@ -6,21 +6,39 @@
     <title>Login and Signup</title>
     <style>
         body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
             font-family: Arial, sans-serif;
+            background: #f0f0f0;
         }
         .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 300px;
-            margin: 0 auto;
+            transition: height 0.3s ease;
+        }
+        .container h2 {
+            margin: 0 0 20px;
+            text-align: center;
         }
         .form-group {
             margin-bottom: 15px;
         }
         .form-group label {
             display: block;
+            margin-bottom: 5px;
         }
         .form-group input {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
             box-sizing: border-box;
         }
         .form-group button {
@@ -29,10 +47,16 @@
             background-color: #4CAF50;
             color: white;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
         }
         .form-group button:hover {
             background-color: #45a049;
+        }
+        .message {
+            margin: 10px 0;
+            font-size: 14px;
+            text-align: center;
         }
         .error {
             color: red;
@@ -40,28 +64,42 @@
         .success {
             color: green;
         }
+        .toggle-text {
+            text-align: center;
+            font-size: 14px;
+            color: #333;
+        }
+        .toggle-link {
+            color: #007BFF;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Login</h2>
-        <div id="loginForm" class="form-group">
-            <label for="loginUsername">Username:</label>
-            <input type="text" id="loginUsername" required>
-            <label for="loginPassword">Password:</label>
-            <input type="password" id="loginPassword" required>
-            <button onclick="login()">Login</button>
-            <p id="loginMessage" class="error"></p>
-        </div>
-        
-        <h2>Signup</h2>
-        <div id="signupForm" class="form-group">
-            <label for="signupUsername">Username:</label>
-            <input type="text" id="signupUsername" required>
-            <label for="signupPassword">Password:</label>
-            <input type="password" id="signupPassword" required>
-            <button onclick="signup()">Signup</button>
-            <p id="signupMessage" class="success"></p>
+        <div id="formContainer">
+            <h2 id="formTitle">Login</h2>
+            <div id="loginForm" class="form-group">
+                <label for="loginUsername">Username:</label>
+                <input type="text" id="loginUsername" required>
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" required>
+                <button onclick="login()">Login</button>
+                <p id="loginMessage" class="message"></p>
+                <p class="toggle-text">New user? <span class="toggle-link" onclick="toggleForm()">Sign up</span></p>
+            </div>
+            <div id="signupForm" class="form-group hidden">
+                <label for="signupUsername">Username:</label>
+                <input type="text" id="signupUsername" required>
+                <label for="signupPassword">Password:</label>
+                <input type="password" id="signupPassword" required>
+                <button onclick="signup()">Signup</button>
+                <p id="signupMessage" class="message"></p>
+                <p class="toggle-text">Already have an account? <span class="toggle-link" onclick="toggleForm()">Login</span></p>
+            </div>
         </div>
     </div>
 
@@ -106,13 +144,34 @@
                 users.push({ username, password });
                 signupMessage.textContent = "Signup successful!";
                 signupMessage.className = "success";
-
-                // Update the JSON file (this part requires server-side logic)
-                // For now, we'll just log the new users list to the console
-                console.log(JSON.stringify(users));
+                // Save users to localStorage (since we can't update the JSON file directly)
+                localStorage.setItem('users', JSON.stringify(users));
             }
         }
+
+        function toggleForm() {
+            const loginForm = document.getElementById("loginForm");
+            const signupForm = document.getElementById("signupForm");
+            const formTitle = document.getElementById("formTitle");
+
+            if (loginForm.classList.contains("hidden")) {
+                loginForm.classList.remove("hidden");
+                signupForm.classList.add("hidden");
+                formTitle.textContent = "Login";
+            } else {
+                loginForm.classList.add("hidden");
+                signupForm.classList.remove("hidden");
+                formTitle.textContent = "Signup";
+            }
+        }
+
+        // Load users from localStorage (for persistent data)
+        document.addEventListener("DOMContentLoaded", () => {
+            const storedUsers = localStorage.getItem('users');
+            if (storedUsers) {
+                users = JSON.parse(storedUsers);
+            }
+        });
     </script>
 </body>
 </html>
-
