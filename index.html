@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 300px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <div id="loginForm" class="form-group">
+            <label for="loginUsername">Username:</label>
+            <input type="text" id="loginUsername" required>
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" required>
+            <button onclick="login()">Login</button>
+            <p id="loginMessage" class="error"></p>
+        </div>
+        
+        <h2>Signup</h2>
+        <div id="signupForm" class="form-group">
+            <label for="signupUsername">Username:</label>
+            <input type="text" id="signupUsername" required>
+            <label for="signupPassword">Password:</label>
+            <input type="password" id="signupPassword" required>
+            <button onclick="signup()">Signup</button>
+            <p id="signupMessage" class="success"></p>
+        </div>
+    </div>
+
+    <script>
+        let users = [];
+
+        // Fetch the users from the JSON file
+        fetch('users.json')
+            .then(response => response.json())
+            .then(data => {
+                users = data;
+            })
+            .catch(error => console.error('Error fetching users:', error));
+
+        function login() {
+            const username = document.getElementById("loginUsername").value;
+            const password = document.getElementById("loginPassword").value;
+            const loginMessage = document.getElementById("loginMessage");
+
+            const user = users.find(user => user.username === username && user.password === password);
+
+            if (user) {
+                loginMessage.textContent = "Login successful!";
+                loginMessage.className = "success";
+            } else {
+                loginMessage.textContent = "Invalid username or password.";
+                loginMessage.className = "error";
+            }
+        }
+
+        function signup() {
+            const username = document.getElementById("signupUsername").value;
+            const password = document.getElementById("signupPassword").value;
+            const signupMessage = document.getElementById("signupMessage");
+
+            const existingUser = users.find(user => user.username === username);
+
+            if (existingUser) {
+                signupMessage.textContent = "Username already exists.";
+                signupMessage.className = "error";
+            } else {
+                users.push({ username, password });
+                signupMessage.textContent = "Signup successful!";
+                signupMessage.className = "success";
+
+                // Update the JSON file (this part requires server-side logic)
+                // For now, we'll just log the new users list to the console
+                console.log(JSON.stringify(users));
+            }
+        }
+    </script>
+</body>
+</html>
+
