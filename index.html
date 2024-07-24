@@ -1,177 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login and Signup</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f0f0f0;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            transition: height 0.3s ease;
-        }
-        .container h2 {
-            margin: 0 0 20px;
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .form-group button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .form-group button:hover {
-            background-color: #45a049;
-        }
-        .message {
-            margin: 10px 0;
-            font-size: 14px;
-            text-align: center;
-        }
-        .error {
-            color: red;
-        }
-        .success {
-            color: green;
-        }
-        .toggle-text {
-            text-align: center;
-            font-size: 14px;
-            color: #333;
-        }
-        .toggle-link {
-            color: #007BFF;
-            cursor: pointer;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login and Signup Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      width: 300px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    input {
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .switch {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .switch a {
+      color: #007BFF;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div id="formContainer">
-            <h2 id="formTitle">Login</h2>
-            <div id="loginForm" class="form-group">
-                <label for="loginUsername">Username:</label>
-                <input type="text" id="loginUsername" required>
-                <label for="loginPassword">Password:</label>
-                <input type="password" id="loginPassword" required>
-                <button onclick="login()">Login</button>
-                <p id="loginMessage" class="message"></p>
-                <p class="toggle-text">New user? <span class="toggle-link" onclick="toggleForm()">Sign up</span></p>
-            </div>
-            <div id="signupForm" class="form-group hidden">
-                <label for="signupUsername">Username:</label>
-                <input type="text" id="signupUsername" required>
-                <label for="signupPassword">Password:</label>
-                <input type="password" id="signupPassword" required>
-                <button onclick="signup()">Signup</button>
-                <p id="signupMessage" class="message"></p>
-                <p class="toggle-text">Already have an account? <span class="toggle-link" onclick="toggleForm()">Login</span></p>
-            </div>
-        </div>
+  <div class="container">
+    <div id="login-form">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <input name="email" type="email" placeholder="Email" required>
+        <input name="password" type="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+      </form>
+      <div class="switch">
+        Don't have an account? <a onclick="switchForm('signup')">Sign up</a>
+      </div>
     </div>
+    <div id="signup-form" style="display: none;">
+      <h2>Sign Up</h2>
+      <form id="signupForm">
+        <input name="email" type="email" placeholder="Email" required>
+        <input name="password" type="password" placeholder="Password" required>
+        <input name="confirm-password" type="password" placeholder="Confirm Password" required>
+        <button type="submit">Sign Up</button>
+      </form>
+      <div class="switch">
+        Already have an account? <a onclick="switchForm('login')">Log in</a>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        let users = [];
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwJyC3425s2JJ0YBWKVdJWkGLH6xcyDOWsI_PPe_M65-xF_4_MEnYyeGjdmC1PdTjf8/exec';
 
-        // Fetch the users from the JSON file
-        fetch('users.json')
-            .then(response => response.json())
-            .then(data => {
-                users = data;
-            })
-            .catch(error => console.error('Error fetching users:', error));
+    function switchForm(form) {
+      if (form === 'signup') {
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('signup-form').style.display = 'block';
+      } else {
+        document.getElementById('login-form').style.display = 'block';
+        document.getElementById('signup-form').style.display = 'none';
+      }
+    }
 
-        function login() {
-            const username = document.getElementById("loginUsername").value;
-            const password = document.getElementById("loginPassword").value;
-            const loginMessage = document.getElementById("loginMessage");
-
-            const user = users.find(user => user.username === username && user.password === password);
-
-            if (user) {
-                loginMessage.textContent = "Login successful!";
-                loginMessage.className = "success";
-            } else {
-                loginMessage.textContent = "Invalid username or password.";
-                loginMessage.className = "error";
-            }
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(loginForm);
+      const email = formData.get('email');
+      const password = formData.get('password');
+      
+      try {
+        const response = await fetch(scriptURL + '?email=' + email + '&password=' + password);
+        const result = await response.json();
+        
+        if (result.result === 'success') {
+          alert('Login successful!');
+        } else {
+          alert('Invalid email or password.');
         }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred during login.');
+      }
+    });
 
-        function signup() {
-            const username = document.getElementById("signupUsername").value;
-            const password = document.getElementById("signupPassword").value;
-            const signupMessage = document.getElementById("signupMessage");
-
-            const existingUser = users.find(user => user.username === username);
-
-            if (existingUser) {
-                signupMessage.textContent = "Username already exists.";
-                signupMessage.className = "error";
-            } else {
-                users.push({ username, password });
-                signupMessage.textContent = "Signup successful!";
-                signupMessage.className = "success";
-                // Save users to localStorage (since we can't update the JSON file directly)
-                localStorage.setItem('users', JSON.stringify(users));
-            }
-        }
-
-        function toggleForm() {
-            const loginForm = document.getElementById("loginForm");
-            const signupForm = document.getElementById("signupForm");
-            const formTitle = document.getElementById("formTitle");
-
-            if (loginForm.classList.contains("hidden")) {
-                loginForm.classList.remove("hidden");
-                signupForm.classList.add("hidden");
-                formTitle.textContent = "Login";
-            } else {
-                loginForm.classList.add("hidden");
-                signupForm.classList.remove("hidden");
-                formTitle.textContent = "Signup";
-            }
-        }
-
-        // Load users from localStorage (for persistent data)
-        document.addEventListener("DOMContentLoaded", () => {
-            const storedUsers = localStorage.getItem('users');
-            if (storedUsers) {
-                users = JSON.parse(storedUsers);
-            }
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      fetch(scriptURL, { method: 'POST', body: new FormData(signupForm) })
+        .then(response => response.json())
+        .then(result => {
+          if (result.result === 'success') {
+            alert('Signup successful!');
+          } else {
+            alert('An error occurred during signup.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred during signup.');
         });
-    </script>
+    });
+  </script>
 </body>
 </html>
